@@ -1,27 +1,31 @@
-import {invariant} from "./utils/invariant.ts";
-import EventEmitter from "events";
+import { Action } from "./Action.ts";
 
-class Dispatcher<Taction> {
-    // Payload 를 action 이라고 생각하면 됨
-    private readonly _emitter = new EventEmitter();
+type DispatchToken = string;
+const prefix = 'ID_';
+class Dispatcher {
+    private readonly callbacks: Map<DispatchToken, (action: Action) => void>
+    private lastID: number;
     constructor() {
+        this.callbacks = new Map();
+        this.lastID = 0;
     }
 
-    dispatch(payload: Taction): void {
-        this._emitter.emit('DISPATCH', payload);
+    dispatch(action: Action): void {
+        this.callbacks.forEach((callback, dispatchToken) => {
+            callback(action);
+        })
+        // this._emitter.emit('DISPATCH', action);
     }
 
-    register(callback: (payload: Taction) => void): () => void {
-        this._emitter.on('DISPATCH', callback);
-        return () => this.unregister(callback);
+    register(callback: (action: Action) => void): DispatchToken {
+        const dispatchToken = prefix + this.lastID;
+        this.lastID += 1;
+        this.callbacks.set(dispatchToken, callback);
+        return dispatchToken;
     }
 
-    unregister(callback: (payload: Taction) => void): void {
-        this._emitter.removeListener('DISPATCH', callback);
-    }
-
-    get emitter(): EventEmitter{
-        return this._emitter;
+    unregister(id: DispatchToken): void {
+        this.callbacks.delete(id);
     }
 }
 
