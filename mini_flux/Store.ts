@@ -1,22 +1,45 @@
-import { dispatcher } from "./Dispatcher";
-import { Action } from "./Action.ts";
+import EventEmitter from 'node:events';
+import { dispatcher } from './Dispatcher';
+import { type Action } from './Action';
 
-abstract class Store<TState> {
+export default abstract class Store<TState> extends EventEmitter {
     private readonly dispatcher = dispatcher;
-    private state: TState;
 
-    constructor(state: TState) {
+    protected state: TState;
+
+    protected constructor(state: TState) {
+        super();
         this.state = state;
+        // this.setState(state);
+    }
+
+    setState(newState: Partial<TState>) {
+        console.log('setState', newState);
+        this.state = { ...this.state, ...newState };
+        this.emitChange();
+    }
+
+    getState() {
+        return this.state;
+    }
+
+    dispatcherRegister() {
         this.dispatcher.register((action: Action) => {
             this.reduce(action);
         });
     }
 
-    setState(newState: Partial<TState>){
-        this.state = {...this.state, newState};
+    registerEvent(callback: (action: Action) => void) {
+        this.addListener('change', callback);
     }
 
-    abstract reduce(action: object): void
+    emitChange() {
+        this.emit('change');
+    }
+
+    // stateChanged() {}
+
+    abstract reduce(action: Action): void;
 }
 
-export { Store };
+// export default { Store };

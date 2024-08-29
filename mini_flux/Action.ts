@@ -1,8 +1,8 @@
-import { dispatcher } from "./Dispatcher";
+import { dispatcher } from './Dispatcher';
 
 interface Action {
-    type: string,
-    payload: any
+    type: string;
+    payload: any;
 }
 
 const ActionTypes = {
@@ -18,12 +18,12 @@ const ActionTypes = {
 };
 
 const actions = {
-    addTodo(text: string){
+    addTodo(text: string) {
         dispatcher.dispatch({
             type: ActionTypes.ADD_TODO,
             payload: text,
-        })
-    }
-}
+        });
+    },
+};
 
-export { Action, ActionTypes, actions }
+export { Action, ActionTypes, actions };
