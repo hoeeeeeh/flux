@@ -1,3 +1,7 @@
+# mini-flux
+mini-flux 에는 제 나름대로 flux 의 동작 방식만 흉내낸 소스코드가 있습니다.  
+flux 와 완전히 동일한 소스코드는 아래의 facebook-flux 아카이브에 있습니다.
+
 # Flux 아키텍쳐
 
 ## 왜 Flux 를 선택했나
